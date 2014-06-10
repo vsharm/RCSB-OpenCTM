@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+
+	</head>
+
+	<body>
+		<div id="info">
+		</div>
+
+		<script src="../build/three.min.js"></script>
+
+		<script src="js/loaders/ctm/lzma.js"></script>
+		<script src="js/loaders/ctm/ctm.js"></script>
+		<script src="js/loaders/ctm/CTMLoader.js"></script>
+
+		<script src="js/Detector.js"></script>
+		
+
+		<script>
+
+			var SCREEN_WIDTH = 500;
+			var SCREEN_HEIGHT = 500;
+
+			var container;
+
+			var camera, scene, renderer;
+
+			var mesh, zmesh, geometry;
+
+			var mouseX = 0, mouseY = 0;
+
+			var windowHalfX = 500 / 2;
+			var windowHalfY = 500 / 2;
+
+			document.addEventListener('mousemove', onDocumentMouseMove, false);
+			
+
+			init(); //Initializes the three.js Scene Required
+			animate(); //Animates calls the function below the scene after every frame change Required as well
+			function animate() {
+				requestAnimationFrame( animate );
+				render(); //rerenders the scene
+			}
+
+
+			function init() {
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				camera = new THREE.PerspectiveCamera( 20, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 2000 );
+				camera.position.z = 2500;
+
+				scene = new THREE.Scene();
+	
+
+
+				// LIGHTS
+
+				//create spot lights give them a color intensity angle, shadows
+				var light = new THREE.SpotLight( 0xffeedd, 1, 650, Math.PI/2, 0 );
+				
+				var light2 = new THREE.SpotLight( 0xffeedd, 1, 650, Math.PI/2, 0 );
+				var light3 = new THREE.SpotLight( 0xffeedd, 1, 650, Math.PI/2, 0 );
+				var light4 = new THREE.SpotLight( 0xffeedd, 1, 650, Math.PI/2, 0 );
+				light.position.set( 0, 0, 800);
+				light2.position.set( 0, 200, 800);
+				light3.position.set( 200, 0, 800);
+				light4.position.set( 0, 0, 800);
+				scene.add( light );
+				scene.add( light2 );
+				scene.add( light3 );
+				scene.add( light4 );
+				//light.shadowCameraVisible = true;
+
+
+
+				// RENDERER
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT ); //sets the size of the render background
+				renderer.setClearColorHex( 0xFFFFFF, 1.0 ); //gives background white color
+
+				
+
+				renderer.domElement.style.position = "relative";
+				container.appendChild( renderer.domElement ); //create a place to render the scene to
+
+				//
+				//adds gamma to the scene
+				renderer.gammaInput = true;
+				renderer.gammaOutput = true;
+
+				// LOADER
+				var loader = new THREE.CTMLoader();
+
+				loader.load( "models/ctm/3j3q.ctm",  function( geometry ) {;
+					//put a reflective material over the surface to color it
+					var material3 = new THREE.MeshPhongMaterial( { color: 0x00ff44, specular: 0x333333, shininess: 20 } );
+					//give the surface a default position rotation and scale, x,yz
+					callbackModel( geometry, 0.7, material3, 0, 0, 0, -200, 0 );
+				}, { useWorker: true } );
+			}
+
+			//This functin positions the surface adds it to the scene
+			function callbackModel( geometry, s, material, x, y, z, rx, ry ) { 
+
+				var mesh = new THREE.Mesh( geometry, material );
+				mesh.position.set( x, y, z );
+				mesh.scale.set( s, s, s );
+				mesh.rotation.x = rx;
+				mesh.rotation.z = ry;
+
+				scene.add( mesh );
+			}
+
+			//handles the mouse movements
+			function onDocumentMouseMove( event ) {
+				mouseX = ( event.clientX - windowHalfX );
+				mouseY = ( event.clientY - windowHalfY );
+			}
+
+
+			function render() { // changes the location of the object upon a mouse move
+  				//this needs proper mouse movements
+  				camera.position.x += ( mouseX*2.5 - camera.position.x ) * .05;
+				camera.position.y += ( mouseY*2.5 - camera.position.y ) * .05;
+
+
+				camera.lookAt( scene.position );
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
+</html>
