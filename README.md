@@ -14,3 +14,5 @@ Steps to getting Started
 6. Drop the model files provided into /examples/models/ctm
 7. navagate your url to http://localhost/mrdoob-three.js-d3cb4e7/examples/ctm_javascript_example
 8. or http://localhost/mrdoob-three.js-d3cb4e7/examples/ctm_javascript_example2
+
+If you have any questions email me: vasharma AT ucsd.edu
